@@ -1,14 +1,15 @@
 package com.nod.practice;
 
+import com.fasterxml.jackson.core.JsonParser;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.util.Timeout;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HTTPClient {
     public static void main(String[] args) {
@@ -19,28 +20,26 @@ public class HTTPClient {
 
 
             // Create a GET request to a specific URL
-            HttpGet request = new HttpGet("https://jsonplaceholder.typicode.com/posts/4");
+            HttpGet request = new HttpGet("https://jsonplaceholder.typicode.com/posts/5");
 
             //Configure request with configuration made before
             request.setConfig(config);
 
-            //Create POST request
-            HttpPost post = new HttpPost("https://jsonplaceholder.typicode.com/posts");
-            post.setHeader("Content-Type", "application/json");
-
-            // Add JSON data to the request
-            String json = "{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}";
-            post.setEntity(new StringEntity(json));
+            // Instantiate object for serialisation
+            ObjectMapper objectMapper = new ObjectMapper();
 
             // Execute the request
-            try (CloseableHttpResponse response = httpClient.execute(post)) {
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
 
                 // Get the response status
                 System.out.println(response.getCode());
 
-                // Get the response body as a String
-                String responseBody = EntityUtils.toString(response.getEntity());
-                System.out.println(responseBody);
+                // Deserialize request entity as Post Object
+                Post post = objectMapper.readValue(EntityUtils.toString(response.getEntity()), Post.class);
+
+                // Check if Deserialization is successful - calling Post toString Method
+                System.out.println(post);
+
             }
 
         } catch (Exception e) {
