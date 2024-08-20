@@ -1,6 +1,5 @@
 package com.nod.practice;
 
-import com.fasterxml.jackson.core.JsonParser;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -36,7 +35,7 @@ public class HTTPClient {
 
                 // Deserialize request entity as Post Object
                 Post post = objectMapper.readValue(EntityUtils.toString(response.getEntity()), Post.class);
-
+                System.out.println(response.getEntity());
                 // Check if Deserialization is successful - calling Post toString Method
                 System.out.println(post);
 
